@@ -1,0 +1,15 @@
+# This file describes a Fastly Compute@Edge package. To learn more visit:
+# https://developer.fastly.com/reference/fastly-toml/
+
+authors = [""]
+description = "fs-monthly hackathon"
+language = "javascript"
+manifest_version = 2
+name = "fs-monthly"
+service_id = "5t93g2H2KnsB8cGy3JYJae"
+[local_server]
+  [local_server.object_store]
+  Fsmonthlyprice = []
+[local_server.backends]
+[local_server.backends.main_origin]
+url = "https://uat.ikea.finance.bank.ikano:443"
