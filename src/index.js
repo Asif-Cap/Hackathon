@@ -29,7 +29,7 @@ async function handleRequest(event) {
   await store.put('hello1', JSON.stringify(data));
   const loandata = await store.get('hello1');
   const dataContent = await loandata.json();
-
+  
   let finaldata;
 
   if(amount >= 99 && amount <= 15000){
@@ -64,23 +64,39 @@ const calculate = (amount, data) => {
   const result = data?.ranges?.filter(val => 
     amount >= val.from && amount <= val.to
   );
+  console.log(data)
+  let one_time_loans={}
+  let terms=result[0].terms
+  for (let i=0; i<terms.length; i++){
 
+    
+  let responseData={}
+  
+   responseData.duration = terms[i];
+   responseData.target_duration=false
+  if(result[0].targetTerm == responseData.duration){
+    responseData.target_duration=true
+  }
+  responseData.monthly_payment = amount / responseData.duration;
 
-  let duration = result[0].targetTerm;
+  if(responseData.monthly_payment != Math.round((responseData.monthly_payment*100)/100)) {
 
-  let monthlyPayment = amount / duration;
-
-  if(monthlyPayment != Math.round((monthlyPayment*100)/100)) {
-
-      monthlyPayment = Math.ceil(monthlyPayment)
+    responseData.monthly_payment = Math.ceil(responseData.monthly_payment)
 
   }
 
-  let finalPayment = amount - (monthlyPayment*Number(duration-1))
+  responseData.final_payment = amount - (responseData.monthly_payment*Number(responseData.duration-1))
 
-  finalPayment = Math.round(finalPayment*100)/100;
+  responseData.final_payment = Math.round(responseData.final_payment*100)/100;
 
-  let totalLoanAmount = (monthlyPayment*Number(duration-1)) + finalPayment;
+  responseData.total_loan_amount = (responseData.monthly_payment*Number(responseData.duration-1)) + responseData.final_payment;
+  responseData.total_amount=amount
+  responseData.apr=data.apr
+  responseData.rate=data.rate
+  one_time_loans[responseData.duration]=responseData
   
-  return {monthlyPayment ,finalPayment,totalLoanAmount,duration , ...data }
+ 
+}
+ 
+ return {one_time_loans}
 }
