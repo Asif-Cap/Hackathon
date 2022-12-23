@@ -1,5 +1,5 @@
 /// <reference types="@fastly/js-compute" />
-const Mustache = require('mustache');
+//const Mustache = require('mustache');
 // import { Router } from "@fastly/expressly";
 
 //const router = new Router();
@@ -9,7 +9,7 @@ const Mustache = require('mustache');
 // Example here: https://illegally-willing-bengal.edgecompute.app/
 addEventListener("fetch", (event) => event.respondWith(handleRequest(event)));
 
-const template = Buffer.from(fastly.includeBytes("./src/templates/fragment.mustache")).toString('utf-8');
+//const template = Buffer.from(fastly.includeBytes("./src/templates/fragment.mustache")).toString('utf-8');
 
 async function handleRequest(event) {
 
@@ -18,17 +18,18 @@ async function handleRequest(event) {
   let amount = params.get("amount")
 
 
-  const store = new ObjectStore('Fsmonthlyprice')
-  const dataReq = await fetch(`https://uat.ikea.finance.bank.ikano/api/v1/loanmatrix`, {
-    backend: "main_origin",
-    cacheOverride: new CacheOverride("override", { ttl: 60 }), // Cache for 60 seconds
-  });
-  // Read the body as a JS object (this API returns JSON)
-  const data = await dataReq.json();
+  const exampleDictionary = new Dictionary("oneTimeLoan");
+  const data = exampleDictionary.get("one-Time-loan-key");
+  // const dataReq = await fetch(`https://uat.ikea.finance.bank.ikano/api/v1/loanmatrix`, {
+  //   backend: "main_origin",
+  //   cacheOverride: new CacheOverride("override", { ttl: 60 }), // Cache for 60 seconds
+  // });
+  // // Read the body as a JS object (this API returns JSON)
+  //const data = await dataReq.json();
  
-  await store.put('hello1', JSON.stringify(data));
-  const loandata = await store.get('hello1');
-  const dataContent = await loandata.json();
+  //await dictionary.put('hello1', JSON.stringify(data));
+  //const loandata = await dictionary.get('hello1');
+  const dataContent = JSON.parse(data);
   
   let finaldata;
 
@@ -39,12 +40,12 @@ async function handleRequest(event) {
   }
   
 
-let html = Mustache.render(
-  template,
-  {
-    data: finaldata
-  }
-)
+// let html = Mustache.render(
+//   template,
+//   {
+//     data: finaldata
+//   }
+// )
 
   if(finaldata) {
     return new Response(JSON.stringify(finaldata), {
